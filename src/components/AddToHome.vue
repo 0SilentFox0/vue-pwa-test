@@ -1,10 +1,10 @@
 <template>
   <div>
-    <pre>
-			{{ isIos }}
-		</pre
-    >
-    <button v-if="isIos" ref="addBtn" class="add-button" @click="clickCallback">
+    <button
+      v-if="isIos && isIos.length && showBtn"
+      ref="addBtn"
+      class="add-button"
+      @click="clickCallback">
       Add
     </button>
   </div>
@@ -16,9 +16,9 @@ import { defineComponent, onMounted, ref } from 'vue';
 export default defineComponent({
   setup() {
     const deferredPrompt = ref(null);
-    const test = ref(navigator.userAgent);
 
     const isIos = navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    const showBtn = ref(false);
 
     const captureEvent = () => {
       window.addEventListener('beforeinstallprompt', e => {
@@ -43,6 +43,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      showBtn.value = true;
       captureEvent();
     });
 
@@ -50,7 +51,7 @@ export default defineComponent({
       deferredPrompt,
       clickCallback,
       isIos,
-      test,
+      showBtn,
     };
   },
 });
