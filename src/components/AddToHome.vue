@@ -1,14 +1,10 @@
 <template>
   <div>
     <pre>
-			{{ test }}
+			{{ isIos }}
 		</pre
     >
-    <button
-      v-if="deferredPrompt && isIos"
-      ref="addBtn"
-      class="add-button"
-      @click="clickCallback">
+    <button v-if="isIos" ref="addBtn" class="add-button" @click="clickCallback">
       Add
     </button>
   </div>
@@ -34,14 +30,16 @@ export default defineComponent({
     };
 
     const clickCallback = () => {
-      deferredPrompt.value.prompt();
-      // Wait for the user to respond to the prompt
-      deferredPrompt.value.userChoice.then(choiceResult => {
-        if (choiceResult.outcome === 'accepted') {
-          // Call another function?
-        }
-        deferredPrompt.value = null;
-      });
+      if (deferredPrompt.value) {
+        deferredPrompt.value.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.value.userChoice.then(choiceResult => {
+          if (choiceResult.outcome === 'accepted') {
+            // Call another function?
+          }
+          deferredPrompt.value = null;
+        });
+      }
     };
 
     onMounted(() => {
