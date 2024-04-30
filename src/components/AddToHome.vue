@@ -1,5 +1,9 @@
 <template>
   <div>
+    <pre>
+			{{ test }}
+		</pre
+    >
     <button
       v-if="deferredPrompt && isIos"
       ref="addBtn"
@@ -16,6 +20,8 @@ import { defineComponent, onMounted, ref } from 'vue';
 export default defineComponent({
   setup() {
     const deferredPrompt = ref(null);
+    const test = ref(navigator.userAgent);
+
     const isIos = navigator.userAgent.match(/iPhone|iPad|iPod/i);
 
     const captureEvent = () => {
@@ -46,6 +52,7 @@ export default defineComponent({
       deferredPrompt,
       clickCallback,
       isIos,
+      test,
     };
   },
 });
