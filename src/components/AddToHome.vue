@@ -1,57 +1,62 @@
 <template>
-  <div>
-    <button
-      v-if="isIos && isIos.length && showBtn"
-      ref="addBtn"
-      class="add-button"
-      @click="clickCallback">
-      Add
-    </button>
-  </div>
+  <button @click="handleAddToHomeScreenClick">Add to Home Screen</button>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount, defineComponent } from 'vue';
 
 export default defineComponent({
+  name: 'AddToHomeScreen',
   setup() {
     const deferredPrompt = ref(null);
+    const isIOS = ref(/iPad|iPhone|iPod/.test(navigator.userAgent));
 
-    const isIos = navigator.userAgent.match(/iPhone|iPad|iPod/i);
-    const showBtn = ref(false);
+    const handleBeforeInstallPrompt = e => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
 
-    const captureEvent = () => {
-      window.addEventListener('beforeinstallprompt', e => {
-        // ! Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault();
-        // Stash the event so it can be triggered later.
-        deferredPrompt.value = e;
-      });
+      // Store the event for later use
+      deferredPrompt.value = e;
     };
 
-    const clickCallback = () => {
+    const handleAddToHomeScreenClick = async () => {
       if (deferredPrompt.value) {
+        // Show the install prompt
         deferredPrompt.value.prompt();
+
         // Wait for the user to respond to the prompt
-        deferredPrompt.value.userChoice.then(choiceResult => {
-          if (choiceResult.outcome === 'accepted') {
-            // Call another function?
-          }
-          deferredPrompt.value = null;
-        });
+        const choiceResult = await deferredPrompt.value.userChoice;
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        deferredPrompt.value = null;
+      } else if (isIOS.value) {
+        // Here we could notify the user to guide them in order to add the app to Home Screen.
+        // You can update your UI to render a notification, popin, alert...
+        console.log(
+          "To add this web app to your Home Screen, open this app in Safari and tap the Share button, then select 'Add to Home Screen'.",
+        );
+      } else {
+        console.log('Install prompt is not available');
       }
     };
 
     onMounted(() => {
-      showBtn.value = true;
-      captureEvent();
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt,
+      );
     });
 
     return {
-      deferredPrompt,
-      clickCallback,
-      isIos,
-      showBtn,
+      handleAddToHomeScreenClick,
+      isIOS,
     };
   },
 });
