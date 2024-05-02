@@ -14,6 +14,12 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "about" */ '../views/CameraPage.vue'),
   },
   {
+    path: '/video',
+    name: 'video',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/VideoPage.vue'),
+  },
+  {
     path: '/qr',
     name: 'qr',
     component: () =>
