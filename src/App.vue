@@ -3,6 +3,7 @@
     <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/camera">Camera</router-link> |
+      <router-link to="/video">Video</router-link> |
       <router-link to="/qr">Qr</router-link>
     </nav>
     <div>
