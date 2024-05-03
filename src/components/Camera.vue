@@ -110,7 +110,7 @@ const initialize = () => {
   }
 
   const videoConstrains: MediaTrackConstraints = {
-    facingMode: shouldFaceUser ? 'user' : 'environment',
+    facingMode: shouldFaceUser.value ? 'user' : 'environment',
   };
   navigator.mediaDevices
     .getUserMedia({ video: videoConstrains, audio: false })
