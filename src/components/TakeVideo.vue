@@ -23,7 +23,7 @@
           v-if="!isRecording"
           class="btn flex-center"
           @click="record">
-         Record
+          Record
         </button>
         <button
           v-else
@@ -65,8 +65,6 @@ export default defineComponent({
       default: null as string | null,
       type: String,
     },
-   
-   
   },
   setup(props) {
     const newVideo = ref(false);
@@ -135,8 +133,6 @@ export default defineComponent({
         newVideo.value = true;
       };
     };
-
-    
 
     const toggleVideo = (videoRec?: HTMLVideoElement) => {
       if (!videoRec)

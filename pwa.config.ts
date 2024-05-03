@@ -4,7 +4,7 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
 
 export default {
   // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#plugin-configuration
-  strategies: 'injectManifest',
+  // strategies: 'injectManifest',
   injectRegister: 'auto',
 
   // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#plugin-configuration-2
@@ -24,11 +24,11 @@ export default {
     description: 'My Awesome App description',
     theme_color: '#ffffff',
   },
-  injectManifest: {
-    // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#service-worker-code
-    // todo: use precaching?
-    // injectionPoint: undefined,
-  },
+  // injectManifest: {
+  //   // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#service-worker-code
+  //   // todo: use precaching?
+  //   // injectionPoint: undefined,
+  // },
   // see: https://vite-pwa-org.netlify.app/assets-generator/integrations.html#pwa-assets-options
   pwaAssets: {
     disabled: false,
