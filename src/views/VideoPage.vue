@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <div class="camera-wrapper">
-      <TakeVideo />
+      <TakeVideo
+        v-model="videoUrl"
+        :upload-url="uploadUrl" />
     </div>
   </div>
 </template>
@@ -14,6 +16,12 @@ export default defineComponent({
   name: 'HomeView',
   components: {
     TakeVideo,
+  },
+  data() {
+    return {
+      videoUrl: null,
+      uploadUrl: 'mister-recorder.herokuapp.com',
+    };
   },
 });
 </script>

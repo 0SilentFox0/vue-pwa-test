@@ -15,8 +15,6 @@ module.exports = {
     'plugin:vue/vue3-recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'eslint:recommended',
-    'airbnb-typescript/base',
-    'prettier',
   ],
   rules: {
     // '@typescript-eslint/indent': ['error', 2],
@@ -80,11 +78,13 @@ module.exports = {
     // https://typescript-eslint.io/linting/troubleshooting#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
     'no-undef': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
+    'vue/singleline-html-element-content-newline': 'off',
+    'vue/html-closing-bracket-newline': 'off',
   },
   ignorePatterns: [
     '**/*.js',
     '.eslintrc.cjs',
-    'stylelint.config.js',
+    'stylelint.config.cjs',
     'postcss.config.js',
     'src/useFunctions/*.js',
     'src/tests/unit/*.js',

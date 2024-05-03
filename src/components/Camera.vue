@@ -6,18 +6,28 @@
       :height="data.canvasSize.height" />
   </div>
 
-  <div v-show="screenState === ScreenState.InPreview" class="video">
-    <video ref="videoRef" playsinline autoplay />
+  <div
+    v-show="screenState === ScreenState.InPreview"
+    class="video">
+    <video
+      ref="videoRef"
+      playsinline
+      autoplay />
   </div>
 
-  <div v-show="screenState === ScreenState.Captured" class="captured-image">
+  <div
+    v-show="screenState === ScreenState.Captured"
+    class="captured-image">
     <a
       ref="capturedImageLinkRef"
       :href="data.imageUrl"
       download="photo"
-      title="photo"
-      ><img ref="capturedImageRef" :src="data.imageUrl" alt="picture"
-    /></a>
+      title="photo">
+      <img
+        ref="capturedImageRef"
+        :src="data.imageUrl"
+        alt="picture" />
+    </a>
   </div>
 
   <div class="overlay">
@@ -29,20 +39,34 @@
     </p>
   </div>
 
-  <div v-show="screenState > ScreenState.Initializing" class="control">
+  <div
+    v-show="screenState > ScreenState.Initializing"
+    class="control">
     <div v-if="screenState === ScreenState.InPreview">
-      <button class="btn btn-primary" @click.prevent="takePicture">
+      <button
+        class="btn btn-primary"
+        @click.prevent="takePicture">
         Take picture
       </button>
     </div>
     <div v-if="screenState === ScreenState.Captured">
-      <button class="btn btn-primary" @click.prevent="retry">Retry</button>
+      <button
+        class="btn btn-primary"
+        @click.prevent="retry">
+        Retry
+      </button>
     </div>
     <div v-if="screenState === ScreenState.Captured">
-      <button class="btn btn-info" @click.prevent="download">Download</button>
+      <button
+        class="btn btn-info"
+        @click.prevent="download">
+        Download
+      </button>
     </div>
     <div v-if="screenState !== ScreenState.Initializing">
-      <button class="btn btn-dark" @click.prevent="$router.push('/')">
+      <button
+        class="btn btn-dark"
+        @click.prevent="$router.push('/')">
         Cancel
       </button>
     </div>
@@ -82,7 +106,7 @@ const initialize = () => {
   };
   navigator.mediaDevices
     .getUserMedia({ video: videoConstrains, audio: false })
-    .then(stream => {
+    .then((stream) => {
       video.srcObject = stream;
     });
   video.addEventListener('canplay', () => {
@@ -156,7 +180,7 @@ const download = () => {
   anchor.click();
 };
 
-watch(screenState, state => {
+watch(screenState, (state) => {
   if (state === ScreenState.Initializing) {
     initialize();
     return;

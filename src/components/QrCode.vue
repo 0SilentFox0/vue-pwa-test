@@ -57,6 +57,7 @@ import { ref } from 'vue';
 import {
   type Result,
   StreamQrcodeBarcodeReader,
+  // @ts-ignore
 } from 'vue3-barcode-qrcode-reader';
 
 const decode = ref<Result | undefined>(undefined);

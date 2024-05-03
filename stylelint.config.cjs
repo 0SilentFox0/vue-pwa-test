@@ -1,9 +1,6 @@
 module.exports = {
-  plugins: ['stylelint-prettier', 'stylelint-order', 'stylelint-scss'],
-  extends: [
-    'stylelint-prettier/recommended',
-    'stylelint-config-rational-order',
-  ],
+  plugins: ['stylelint-order', 'stylelint-scss'],
+  extends: ['stylelint-config-recommended-vue'],
   rules: {
     'at-rule-no-unknown': [
       true,

@@ -1,10 +1,15 @@
 <template>
   <div class="main-wrapper">
     <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/camera">Camera</router-link> |
-      <router-link to="/video">Video</router-link> |
-      <router-link to="/qr">Qr</router-link>
+      <router-link to="/"> Home </router-link>
+      |
+      <router-link to="/camera"> Camera </router-link>
+      |
+      <router-link to="/qr"> Qr </router-link>
+      |
+      <router-link to="/video"> Video </router-link>
+      |
+      <router-link to="/push"> push </router-link>
     </nav>
     <div>
       <router-view />

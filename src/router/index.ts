@@ -25,10 +25,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/QrCodePage.vue'),
   },
+  {
+    path: '/push',
+    name: 'push',
+    component: () => import('../views/PushNotification.vue'),
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 
