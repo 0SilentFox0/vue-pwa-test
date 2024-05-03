@@ -23,7 +23,7 @@
           v-if="!isRecording"
           class="btn flex-center"
           @click="record">
-          {{ recordBtnContent }}
+         Record
         </button>
         <button
           v-else
@@ -55,140 +55,6 @@
   </section>
 </template>
 
-<!-- <script>
-export default {
-  name: 'VideoCapture',
-  components: {},
-  props: {
-    uploadUrl: {
-      default: null,
-    },
-    recordBtnContent: {
-      default: 'Record',
-    },
-    stopBtnContent: {
-      default: '◼',
-    },
-    cancelBtnContent: {
-      default: 'Cancel',
-    },
-    doneBtnContent: {
-      default: 'OK',
-    },
-  },
-  data() {
-    return {
-      newVideo: false,
-      errText: null,
-      isValid: true,
-      isUploading: false,
-      isRecording: false, // recording mode identifier
-      isFinished: false, // finished recording - action buttons indicator
-      recorder: null, // component wide MediaRecorder
-      connection: null, // component wide WebSocket
-      videoUrl: null, // link to video - assigned when done writing video file
-      stream: null,
-    };
-  },
-  created() {
-    if (!this.uploadUrl) this.errText = 'There is no upload url available';
-    // this.getWebSocket(); // initialize connection to WebSocket
-  },
-  mounted() {
-    this.resetVideo();
-  },
-  unmounted() {
-    this.stream.getTracks().forEach(function (track) {
-      track.stop();
-    });
-  },
-  methods: {
-    // reset video display with media device media stream
-    resetVideo() {
-      this.isFinished = false;
-      this.isRecording = false;
-      this.isLoading = true;
-      this.$refs.videoRec.muted = true;
-      navigator.mediaDevices
-        .getUserMedia({
-          video: {
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-          },
-          audio: true,
-        })
-        .then(this.gotStream)
-        .catch(() => (this.isValid = false));
-    },
-    // start recoording
-    record() {
-      if (!this.uploadUrl) return;
-      this.recorder.start();
-      this.isRecording = true;
-    },
-    // stop recording
-    stop() {
-      this.recorder.stop();
-      this.isRecording = false;
-      this.isFinished = true;
-      // this.connection.send('DONE');
-    },
-    // reset video diaply and emit video file url
-    done() {
-      this.resetVideo();
-    },
-    // initialize MediaRecorder and video element source
-    gotStream(mediaStream) {
-      this.stream = mediaStream;
-      this.recorder = new MediaRecorder(mediaStream, {
-        mimeType: 'video/webm',
-        audioBitsPerSecond: 128000,
-      });
-      this.recorder.ondataavailable = this.videoDataHandler;
-      this.$refs.videoRec.src = null;
-      this.$refs.videoRec.srcObject = mediaStream;
-      this.toggleVideo();
-    },
-    // handle sending data for writing using the given WebSocket
-    videoDataHandler(event) {
-      this.isUploading = true;
-      let reader = new FileReader();
-      reader.readAsArrayBuffer(event.data);
-
-      reader.onloadend = () => {
-        const blob = new Blob([reader.result]);
-        const video = document.getElementById('newVideo');
-        video.src = URL.createObjectURL(blob);
-        this.newVideo = true;
-      };
-    },
-    // initialize WebSocket
-    // getWebSocket() {
-    //   const websocketEndpoint = 'wss://' + this.uploadUrl;
-    //   this.connection = new WebSocket(websocketEndpoint);
-    //   this.connection.binaryType = 'arraybuffer';
-    //   this.connection.onmessage = message => {
-    //     this.updateVideoFile(message.data);
-    //     this.$refs.videoRec.muted = false;
-    //   };
-    // },
-    // update video when file written
-    updateVideoFile(fileName) {
-      this.videoUrl = `https://${this.uploadUrl}/uploads/${fileName}.webm`;
-      this.toggleVideo();
-      this.$refs.videoRec.srcObject = null;
-      this.$refs.videoRec.src = this.videoUrl;
-      this.isUploading = false;
-    },
-    // toggle video display
-    toggleVideo() {
-      this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
-      this.$refs.videoRec.controls = !this.$refs.videoRec.controls;
-    },
-  },
-};
-</script> -->
-
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 
@@ -199,18 +65,8 @@ export default defineComponent({
       default: null as string | null,
       type: String,
     },
-    recordBtnContent: {
-      default: 'Record',
-      type: String,
-    },
-    stopBtnContent: {
-      default: '◼',
-      type: String,
-    },
-    doneBtnContent: {
-      default: 'OK',
-      type: String,
-    },
+   
+   
   },
   setup(props) {
     const newVideo = ref(false);
@@ -220,7 +76,6 @@ export default defineComponent({
     const isRecording = ref(false);
     const isFinished = ref(false);
     let recorder: MediaRecorder | null = null;
-    let connection: WebSocket | null = null;
     let videoUrl: string | null = null;
     let stream: MediaStream | null = null;
 
@@ -282,14 +137,7 @@ export default defineComponent({
       };
     };
 
-    const updateVideoFile = (fileName: string) => {
-      videoUrl = `https://${props.uploadUrl}/uploads/${fileName}.webm`;
-      toggleVideo();
-      const videoRec = document.querySelector('video') as HTMLVideoElement;
-      videoRec.srcObject = null;
-      videoRec.src = videoUrl;
-      isUploading.value = false;
-    };
+    
 
     const toggleVideo = (videoRec?: HTMLVideoElement) => {
       if (!videoRec)
