@@ -48,6 +48,12 @@
         @click.prevent="takePicture">
         Take picture
       </button>
+      <button
+        @click="flipCamera"
+        id="flip-btn"
+        class="btn btn-sm btn-warning">
+        Flip Camera
+      </button>
     </div>
     <div v-if="screenState === ScreenState.Captured">
       <button
@@ -94,6 +100,8 @@ const data = reactive({
   imageUrl: '',
 });
 
+const shouldFaceUser = ref(true);
+
 const initialize = () => {
   const video = videoRef.value;
   const canvas = canvasRef.value;
@@ -102,7 +110,7 @@ const initialize = () => {
   }
 
   const videoConstrains: MediaTrackConstraints = {
-    facingMode: 'environment',
+    facingMode: shouldFaceUser ? 'user' : 'environment',
   };
   navigator.mediaDevices
     .getUserMedia({ video: videoConstrains, audio: false })
@@ -126,6 +134,12 @@ const initialize = () => {
 
     screenState.value = ScreenState.InPreview;
   });
+};
+
+const flipCamera = () => {
+  shouldFaceUser.value = !shouldFaceUser.value;
+
+  initialize();
 };
 
 const retry = () => {

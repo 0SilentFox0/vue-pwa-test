@@ -29,7 +29,7 @@
           v-else
           class="btn"
           @click="stop">
-          <span style="font-size: 3em">{{ stopBtnContent }}</span>
+          <span style="font-size: 3em">Stop</span>
         </button>
       </template>
     </div>
@@ -76,7 +76,6 @@ export default defineComponent({
     const isRecording = ref(false);
     const isFinished = ref(false);
     let recorder: MediaRecorder | null = null;
-    let videoUrl: string | null = null;
     let stream: MediaStream | null = null;
 
     const resetVideo = () => {
