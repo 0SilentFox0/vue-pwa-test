@@ -5,18 +5,17 @@ module.exports = {
     'at-rule-no-unknown': [
       true,
       {
-        ignoreAtRules: ['apply', 'variants', 'responsive', 'screen', 'layer'],
+        ignoreAtRules: [
+          'apply',
+          'variants',
+          'responsive',
+          'screen',
+          'layer',
+          'tailwind',
+        ],
       },
     ],
-    'declaration-block-trailing-semicolon': null,
     'no-descending-specificity': null,
-    'prettier/prettier': true,
     'order/properties-order': [],
-    'plugin/rational-order': [
-      true,
-      {
-        'empty-line-between-groups': true,
-      },
-    ],
   },
 };

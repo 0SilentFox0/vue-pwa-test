@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "vue.volar",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "usernamehw.errorlens",
+    "YoavBls.pretty-ts-errors",
+    "mrmlnc.vscode-scss",
+    "vitest.explorer"
+  ]
+}

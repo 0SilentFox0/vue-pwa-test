@@ -1,85 +1,87 @@
 <template>
-  <div class="canvas">
-    <canvas
-      ref="canvasRef"
-      :width="data.canvasSize.width"
-      :height="data.canvasSize.height" />
-  </div>
+  <div>
+    <div>
+      <div
+        v-show="
+          screenState === ScreenState.Initializing ||
+          screenState === ScreenState.InPreview
+        ">
+        <div class="absolute top-0 right-0 left-0 bottom-0 bg-black">
+          <div class="canvas">
+            <canvas
+              ref="canvasRef"
+              :width="data.canvasSize.width"
+              :height="data.canvasSize.height" />
+          </div>
 
-  <div
-    v-show="screenState === ScreenState.InPreview"
-    class="video">
-    <video
-      ref="videoRef"
-      playsinline
-      autoplay />
-  </div>
+          <video
+            ref="videoRef"
+            class="absolute top-10 right-0 left-0 bottom-40 z-10"
+            playsinline
+            autoplay />
 
-  <div
-    v-show="screenState === ScreenState.Captured"
-    class="captured-image">
-    <a
-      ref="capturedImageLinkRef"
-      :href="data.imageUrl"
-      download="photo"
-      title="photo">
-      <img
-        ref="capturedImageRef"
-        :src="data.imageUrl"
-        alt="picture" />
-    </a>
-  </div>
+          <div class="absolute right-0 left-0 bottom-0 z-20 h-40">
+            <img
+              src="/take-photo.svg?t=2"
+              alt="Foto nemen"
+              class="camera-button rounded-full absolute z-20 bottom-10 m-auto left-0 right-0 center w-12 h-12"
+              @click.prevent="takePicture" />
+            <!-- <button class="rounded-full absolute z-20 bottom-10 m-auto left-0 right-0 center w-12 h-12"
+              >
+              
+            </button> -->
+            <img
+              src="/flip-camera.svg"
+              alt="Camera draaien"
+              class="flip-camera-button rounded-full absolute z-20 right-10"
+              @click="flipCamera" />
+            <!-- <button id="flip-btn" class="rounded-full absolute z-20 bottom-10 right-10 w-12 h-12" @click="flipCamera">
+            
+            </button> -->
+            <span
+              class="back-camera-button absolute z-20 left-10 w-32"
+              @click.prevent="$router.push('/')"
+              >Terug</span
+            >
+          </div>
+        </div>
+      </div>
 
-  <div class="overlay">
-    <p>
-      videoW: {{ data.videoSize.width }}, videoH: {{ data.videoSize.height
-      }}<br />
-      canvasW: {{ data.canvasSize.width }}, canvasH: {{ data.canvasSize.height
-      }}<br />
-    </p>
-  </div>
+      <div v-show="screenState === ScreenState.Captured">
+        <h1>Result</h1>
+        <p>The captured image is visible below</p>
+        <div class="captured-image">
+          <a
+            ref="capturedImageLinkRef"
+            :href="data.imageUrl"
+            download="photo"
+            title="photo">
+            <img
+              ref="capturedImageRef"
+              :src="data.imageUrl"
+              alt="picture" />
+          </a>
+        </div>
 
-  <div
-    v-show="screenState > ScreenState.Initializing"
-    class="control">
-    <div v-if="screenState === ScreenState.InPreview">
-      <button
-        class="btn btn-primary"
-        @click.prevent="takePicture">
-        Take picture
-      </button>
-      <button
-        @click="flipCamera"
-        id="flip-btn"
-        class="btn btn-sm btn-warning">
-        Flip Camera
-      </button>
+        <button
+          class="btn btn-primary"
+          @click.prevent="retry">
+          Try again.
+        </button>
+      </div>
     </div>
-    <div v-if="screenState === ScreenState.Captured">
-      <button
-        class="btn btn-primary"
-        @click.prevent="retry">
-        Retry
-      </button>
-    </div>
-    <div v-if="screenState === ScreenState.Captured">
-      <button
-        class="btn btn-info"
-        @click.prevent="download">
-        Download
-      </button>
-    </div>
-    <div v-if="screenState !== ScreenState.Initializing">
-      <button
-        class="btn btn-dark"
-        @click.prevent="$router.push('/')">
-        Cancel
-      </button>
-    </div>
+    <!-- 
+    <div v-show="screenState === ScreenState.InPreview" class="video">
+      <video ref="videoRef" playsinline autoplay />
+    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
+// @ts-nocheck
+/* eslint-disable */
+// Implement https://codepen.io/chengarda/pen/wRxoyB as well.
+
 import { onBeforeUnmount, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 enum ScreenState {
@@ -99,10 +101,11 @@ const data = reactive({
   canvasSize: { width: 0, height: 0 },
   imageUrl: '',
 });
+const stream = ref({} as MediaStream);
 
-const shouldFaceUser = ref(true);
+const shouldFaceUser = ref(false);
 
-const initialize = () => {
+const initialize = async () => {
   const video = videoRef.value;
   const canvas = canvasRef.value;
   if (!video || !canvas) {
@@ -112,11 +115,12 @@ const initialize = () => {
   const videoConstrains: MediaTrackConstraints = {
     facingMode: shouldFaceUser.value ? 'user' : 'environment',
   };
-  navigator.mediaDevices
-    .getUserMedia({ video: videoConstrains, audio: false })
-    .then((stream) => {
-      video.srcObject = stream;
-    });
+  stream.value = await navigator.mediaDevices.getUserMedia({
+    video: videoConstrains,
+    audio: false,
+  });
+
+  video.srcObject = stream.value;
   video.addEventListener('canplay', () => {
     if (screenState.value !== ScreenState.Initializing) {
       return;
@@ -136,10 +140,9 @@ const initialize = () => {
   });
 };
 
-const flipCamera = () => {
+const flipCamera = async () => {
   shouldFaceUser.value = !shouldFaceUser.value;
-
-  initialize();
+  await initialize();
 };
 
 const retry = () => {
@@ -186,17 +189,9 @@ const takePicture = () => {
   screenState.value = ScreenState.Captured;
 };
 
-const download = () => {
-  const anchor = capturedImageLinkRef.value;
-  if (!anchor) {
-    throw new Error('Implementation error, reference is null');
-  }
-  anchor.click();
-};
-
-watch(screenState, (state) => {
+watch(screenState, async (state) => {
   if (state === ScreenState.Initializing) {
-    initialize();
+    await initialize();
     return;
   }
 });
@@ -207,6 +202,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   const video = videoRef.value;
+  stream.value.getTracks().forEach(function (track) {
+    track.stop();
+  });
   if (video) {
     video.pause();
     video.remove();
@@ -215,6 +213,26 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+img.camera-button {
+  height: 60px;
+  width: 60px;
+  -webkit-touch-callout: none;
+}
+
+img.flip-camera-button {
+  height: 30px;
+  width: 30px;
+  bottom: 60px;
+  color: white;
+  -webkit-touch-callout: none;
+}
+
+span.back-camera-button {
+  bottom: 60px;
+  font-size: 20px;
+  color: white;
+}
+
 div.overlay {
   bottom: 0;
   top: 0;
@@ -233,6 +251,7 @@ div.control {
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.2);
 }
+
 canvas {
   height: 0;
 }

@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment{
+        dockerRegistry = 'edumundo.azurecr.io'
+        imageName = "brightbirds-pwa-dev:latest"
+        IMAGE_TAG = "${dockerRegistry}/${imageName}"
+        dockerCredentialId = 'acr-credentials'
+		dockerHubCredentialId = 'docker-credentials'
+        VERSION = VersionNumber(versionNumberString: '${BUILD_DATE_FORMATTED,"yyyyMMdd"}');
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                dir("") {
+                    withCredentials([string(credentialsId: 'fontawesometoken', variable: 'FONTAWESOMETOKEN')]) { 
+                        withDockerRegistry([url: 'https://index.docker.io/v1/', credentialsId: dockerHubCredentialId]) {
+                                sh """
+                                    echo 'Building docker'
+                                    docker build -t  "${IMAGE_TAG}" -f "./deployment/development/Dockerfile" --pull  --build-arg ENABLED_MODULES="brotli" --build-arg FONTAWESOMETOKEN=${FONTAWESOMETOKEN} .
+                                """
+                        }   
+                    }
+                }
+            }
+        }
+		
+		stage('Push') {
+            steps {
+                dir("") {
+                    withDockerRegistry([credentialsId: dockerCredentialId, url: "https://${dockerRegistry}"]) {
+                        sh """
+                            echo 'Pushing image'
+                            docker push "${IMAGE_TAG}"
+                        """
+                    }  
+                }
+            }
+        }
+
+    }
+}

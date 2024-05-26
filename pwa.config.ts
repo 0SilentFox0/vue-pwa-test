@@ -4,7 +4,7 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
 
 export default {
   // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#plugin-configuration
-  // strategies: 'injectManifest',
+  strategies: 'injectManifest',
   injectRegister: 'auto',
 
   // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#plugin-configuration-2
@@ -19,16 +19,24 @@ export default {
   },
   includeAssets: [],
   manifest: {
-    name: 'My Awesome App',
-    short_name: 'MyApp',
-    description: 'My Awesome App description',
+    name: 'BrightBirds POC',
+    short_name: 'BrightBirds POC',
+    description: 'POC of BrightBirds',
     theme_color: '#ffffff',
+    scope: '/',
+    start_url: '/',
+    related_applications: [
+      {
+        platform: 'webapp',
+        url: 'https://a8c3-77-174-34-16.ngrok-free.app',
+      },
+    ],
   },
-  // injectManifest: {
-  //   // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#service-worker-code
-  //   // todo: use precaching?
-  //   // injectionPoint: undefined,
-  // },
+  injectManifest: {
+    // see: https://vite-pwa-org.netlify.app/guide/inject-manifest.html#service-worker-code
+    // todo: use precaching?
+    // injectionPoint: undefined,
+  },
   // see: https://vite-pwa-org.netlify.app/assets-generator/integrations.html#pwa-assets-options
   pwaAssets: {
     disabled: false,

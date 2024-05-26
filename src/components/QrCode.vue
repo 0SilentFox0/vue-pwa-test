@@ -1,93 +1,57 @@
 <template>
-  <div class="flex justify-center items-center mt-10">
-    <template v-if="isLoading">
-      <button
-        class="bg-yellow-300 px-6 py-1 rounded-md me-4"
-        @click="handleFacemode">
-        Facemode
-      </button>
-      <button class="bg-red-300 px-6 py-1 rounded-md" @click="handleOnCanStop">
-        Stop
-      </button>
-    </template>
-
-    <template v-else>
-      <button
-        class="bg-green-300 px-6 py-1 rounded-md"
-        @click="handleOnCanPlay">
-        Stream
-      </button>
-
-      <button
-        v-if="decode"
-        class="bg-blue-300 px-6 py-1 rounded-md"
-        @click="handleOnReset">
-        Reset
-      </button>
-    </template>
-  </div>
-
-  <div class="flex flex-col items-center justify-center mt-6">
-    <pre>Result:{{ decode }}</pre>
-
-    <div class="phone mt-6">
-      <div class="notch-container">
-        <div class="notch" />
-      </div>
-
-      <div class="content">
-        <template v-if="!isLoading">
-          <h1 class="text-xl mb-2">Reader Barcode & QRCode</h1>
-          <h2 class="text-base text-red-500 capitalize mb-4">mode: shoot</h2>
-        </template>
-
-        <StreamQrcodeBarcodeReader
-          ref="refCamera"
-          capture="shoot"
-          show-on-stream
-          @onloading="onLoading"
-          @result="onResult" />
-      </div>
-    </div>
-  </div>
+  <h1>Scan van QR code</h1>
+  <div id="qr-code-full-region" />
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
-import {
-  type Result,
-  StreamQrcodeBarcodeReader,
-  // @ts-ignore
-} from 'vue3-barcode-qrcode-reader';
+<script lang="ts">
+// References:
+// https://github.com/mebjas/html5-qrcode/issues/332
+// https://scanapp.org/html5-qrcode-docs/docs/intro
 
-const decode = ref<Result | undefined>(undefined);
-const isLoading = ref<boolean>(false);
-function onResult(data: Result | undefined): void {
-  decode.value = data;
-}
+import { defineComponent, onMounted, ref } from 'vue';
 
-function onLoading(loading: boolean) {
-  isLoading.value = loading;
-}
+import { Html5Qrcode } from 'html5-qrcode';
 
-// define ref for component
-const refCamera = ref<InstanceType<typeof StreamQrcodeBarcodeReader> | null>(
-  null,
-);
+export default defineComponent({
+  props: {
+    qrbox: {
+      type: Number,
+      default: 250,
+    },
+    fps: {
+      type: Number,
+      default: 10,
+    },
+  },
+  emits: ['result'],
+  setup(props, { emit }) {
+    const decodedResultData = ref(null);
+    const decodedTextData = ref<any>(null);
 
-function handleOnCanPlay() {
-  refCamera.value?.onCanPlay();
-}
+    let html5QrcodeScanner: any = null;
 
-function handleOnReset() {
-  refCamera.value?.onReset();
-}
+    const onScanSuccess = (decodedText: string, decodedResult: any) => {
+      decodedResultData.value = decodedResult;
+      decodedTextData.value = decodedText;
+      html5QrcodeScanner.stop();
+      emit('result', decodedText);
+    };
 
-function handleFacemode() {
-  refCamera.value?.onChangeFacemode();
-}
+    onMounted(() => {
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      html5QrcodeScanner = new Html5Qrcode('qr-code-full-region');
 
-function handleOnCanStop() {
-  refCamera.value?.onCanStop();
-}
+      html5QrcodeScanner.start(
+        { facingMode: 'environment' },
+        config,
+        onScanSuccess,
+      );
+    });
+
+    return {
+      decodedResultData,
+      decodedTextData,
+    };
+  },
+});
 </script>

@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  h1 {
+    @apply text-2xl;
+    margin-bottom: 12px;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  p {
+    margin-bottom: 14px;
+  }
+  button {
+    @apply bg-amber-700 text-white hover:bg-white hover:text-amber-700 border hover:border-amber-700 py-2 px-4 rounded;
+  }
+}

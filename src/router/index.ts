@@ -10,25 +10,47 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/camera',
     name: 'camera',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/CameraPage.vue'),
+    component: () => import('../views/CameraPage.vue'),
+  },
+  {
+    path: '/camera-instruction',
+    name: 'cameraInstruction',
+    component: () => import('../views/CameraInstruction.vue'),
   },
   {
     path: '/video',
     name: 'video',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/VideoPage.vue'),
+    component: () => import('../views/VideoPage.vue'),
+  },
+  {
+    path: '/video-instruction',
+    name: 'videoInstruction',
+    component: () => import('../views/VideoInstruction.vue'),
   },
   {
     path: '/qr',
     name: 'qr',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/QrCodePage.vue'),
+    component: () => import('../views/QrCodePage.vue'),
+  },
+  {
+    path: '/qr-instruction',
+    name: 'qrInstruction',
+    component: () => import('../views/QrCodeInstructionsPage.vue'),
+  },
+  {
+    path: '/qr-result',
+    name: 'qrResult',
+    component: () => import('../views/QrCodeScanResults.vue'),
   },
   {
     path: '/push',
     name: 'push',
     component: () => import('../views/PushNotification.vue'),
+  },
+  {
+    path: '/install',
+    name: 'install',
+    component: () => import('@/views/InstallPage.vue'),
   },
 ];
 
