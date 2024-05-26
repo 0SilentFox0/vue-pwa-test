@@ -28,7 +28,7 @@ export default {
     related_applications: [
       {
         platform: 'webapp',
-        url: 'https://a8c3-77-174-34-16.ngrok-free.app',
+        url: 'https://vue-pwa-test-bay.vercel.app/',
       },
     ],
   },
@@ -45,6 +45,6 @@ export default {
     },
     htmlPreset: '2023',
 
-    image: 'public/test.png',
+    // image: 'public/test.png',
   },
 } as const satisfies Partial<VitePWAOptions>;
