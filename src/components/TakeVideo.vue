@@ -25,10 +25,17 @@
 
           <div class="absolute right-0 left-0 bottom-0 z-20 h-40">
             <img
+              v-if="!isRecording"
               src="/take-photo.svg?t=2"
               alt="Foto nemen"
               class="camera-button rounded-full absolute z-20 bottom-10 m-auto left-0 right-0 center w-12 h-12"
-              @click.prevent="takePicture" />
+              @click.prevent="startRecording" />
+            <img
+              v-else
+              src="/stop-photo.svg?t=2"
+              alt="Foto nemen"
+              class="camera-button rounded-full absolute z-20 bottom-10 m-auto left-0 right-0 center w-12 h-12"
+              @click.prevent="stopRecording" />
             <img
               src="/flip-camera.svg"
               alt="Camera draaien"

@@ -39,7 +39,7 @@
             >
           </div>
 
-          <div class="absolute right-0 bottom-20 z-20 h-40">
+          <div class="absolute right-10 bottom-20 z-20 h-40">
             <button
               class="btn btn-primary"
               @click="zoomIn">
@@ -208,13 +208,46 @@ const takePicture = () => {
 const zoomIn = () => {
   if (zoomLevel.value < maxZoom) {
     zoomLevel.value += 0.1;
+    updateCanvas();
   }
 };
 
 const zoomOut = () => {
   if (zoomLevel.value > minZoom) {
     zoomLevel.value -= 0.1;
+    updateCanvas();
   }
+};
+
+const updateCanvas = () => {
+  const video = videoRef.value;
+  const canvas = canvasRef.value;
+  if (!video || !canvas) {
+    return;
+  }
+  const context = canvas.getContext('2d');
+  if (!context) {
+    return;
+  }
+
+  const zoomFactor = zoomLevel.value;
+  const sx = (video.videoWidth - video.videoWidth / zoomFactor) / 2;
+  const sy = (video.videoHeight - video.videoHeight / zoomFactor) / 2;
+  const sWidth = video.videoWidth / zoomFactor;
+  const sHeight = video.videoHeight / zoomFactor;
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(
+    video,
+    sx,
+    sy,
+    sWidth,
+    sHeight,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
 };
 
 watch(screenState, async (state) => {
