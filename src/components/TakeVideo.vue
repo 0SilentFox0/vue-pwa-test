@@ -211,27 +211,6 @@ const retry = () => {
   screenState.value = ScreenState.InPreview;
 };
 
-const takePicture = () => {
-  if (screenState.value !== ScreenState.InPreview) {
-    return;
-  }
-  const video = videoRef.value;
-  const canvas = canvasRef.value;
-  const capturedImage = capturedImageRef.value;
-  if (!video || !canvas || !capturedImage) {
-    throw new Error('Implementation error, reference is null');
-  }
-  const context = canvas.getContext('2d');
-  if (!context) {
-    throw new Error('Failed to obtain the context from canvas');
-  }
-
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  data.imageUrl = canvas.toDataURL('image/jpeg');
-
-  screenState.value = ScreenState.Captured;
-};
-
 const startRecording = () => {
   if (screenState.value !== ScreenState.InPreview) {
     return;

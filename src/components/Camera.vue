@@ -104,8 +104,8 @@ const stream = ref({} as MediaStream);
 
 const shouldFaceUser = ref(false);
 const zoomLevel = ref(1);
-const maxZoom = 3;
-const minZoom = 1;
+const maxZoom = ref(1);
+const minZoom = ref(1);
 
 const initialize = async () => {
   const video = videoRef.value;
@@ -137,7 +137,24 @@ const initialize = async () => {
     data.videoSize.height = video.videoHeight;
 
     screenState.value = ScreenState.InPreview;
+
+    setMaxZoom();
   });
+};
+
+const setMaxZoom = () => {
+  const track = stream.value.getVideoTracks()[0];
+  const capabilities = track.getCapabilities();
+  if (capabilities.zoom) {
+    minZoom.value = capabilities.zoom.min;
+    maxZoom.value = capabilities.zoom.max;
+    track.applyConstraints({ advanced: [{ zoom: minZoom.value }] });
+  }
+};
+
+const setZoom = async (zoom: number) => {
+  const track = stream.value.getVideoTracks()[0];
+  await track.applyConstraints({ advanced: [{ zoom: zoom }] });
 };
 
 const flipCamera = async () => {
@@ -205,49 +222,18 @@ const takePicture = () => {
   screenState.value = ScreenState.Captured;
 };
 
-const zoomIn = () => {
-  if (zoomLevel.value < maxZoom) {
+const zoomIn = async () => {
+  if (zoomLevel.value < maxZoom.value) {
     zoomLevel.value += 0.1;
-    updateCanvas();
+    await setZoom(zoomLevel.value);
   }
 };
 
-const zoomOut = () => {
-  if (zoomLevel.value > minZoom) {
+const zoomOut = async () => {
+  if (zoomLevel.value > minZoom.value) {
     zoomLevel.value -= 0.1;
-    updateCanvas();
+    await setZoom(zoomLevel.value);
   }
-};
-
-const updateCanvas = () => {
-  const video = videoRef.value;
-  const canvas = canvasRef.value;
-  if (!video || !canvas) {
-    return;
-  }
-  const context = canvas.getContext('2d');
-  if (!context) {
-    return;
-  }
-
-  const zoomFactor = zoomLevel.value;
-  const sx = (video.videoWidth - video.videoWidth / zoomFactor) / 2;
-  const sy = (video.videoHeight - video.videoHeight / zoomFactor) / 2;
-  const sWidth = video.videoWidth / zoomFactor;
-  const sHeight = video.videoHeight / zoomFactor;
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(
-    video,
-    sx,
-    sy,
-    sWidth,
-    sHeight,
-    0,
-    0,
-    canvas.width,
-    canvas.height,
-  );
 };
 
 watch(screenState, async (state) => {
