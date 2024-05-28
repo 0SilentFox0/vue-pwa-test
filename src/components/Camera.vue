@@ -145,15 +145,20 @@ const initialize = async () => {
 const setMaxZoom = () => {
   const track = stream.value.getVideoTracks()[0];
   const capabilities = track.getCapabilities();
+  // @ts-ignore
   if (capabilities.zoom) {
+    // @ts-ignore
     minZoom.value = capabilities.zoom.min;
+    // @ts-ignore
     maxZoom.value = capabilities.zoom.max;
+    // @ts-ignore
     track.applyConstraints({ advanced: [{ zoom: minZoom.value }] });
   }
 };
 
 const setZoom = async (zoom: number) => {
   const track = stream.value.getVideoTracks()[0];
+  // @ts-ignore
   await track.applyConstraints({ advanced: [{ zoom: zoom }] });
 };
 
