@@ -26,23 +26,30 @@
               alt="Foto nemen"
               class="camera-button rounded-full absolute z-20 bottom-10 m-auto left-0 right-0 center w-12 h-12"
               @click.prevent="takePicture" />
-            <!-- <button class="rounded-full absolute z-20 bottom-10 m-auto left-0 right-0 center w-12 h-12"
-              >
-              
-            </button> -->
             <img
               src="/flip-camera.svg"
               alt="Camera draaien"
               class="flip-camera-button rounded-full absolute z-20 right-10"
               @click="flipCamera" />
-            <!-- <button id="flip-btn" class="rounded-full absolute z-20 bottom-10 right-10 w-12 h-12" @click="flipCamera">
-            
-            </button> -->
+
             <span
               class="back-camera-button absolute z-20 left-10 w-32"
               @click.prevent="$router.push('/')"
               >Terug</span
             >
+          </div>
+
+          <div class="absolute right-0 bottom-20 z-20 h-40">
+            <button
+              class="btn btn-primary"
+              @click="zoomIn">
+              Zoom In
+            </button>
+            <button
+              class="btn btn-primary"
+              @click="zoomOut">
+              Zoom Out
+            </button>
           </div>
         </div>
       </div>
@@ -70,18 +77,10 @@
         </button>
       </div>
     </div>
-    <!-- 
-    <div v-show="screenState === ScreenState.InPreview" class="video">
-      <video ref="videoRef" playsinline autoplay />
-    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck
-/* eslint-disable */
-// Implement https://codepen.io/chengarda/pen/wRxoyB as well.
-
 import { onBeforeUnmount, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 enum ScreenState {
@@ -104,6 +103,9 @@ const data = reactive({
 const stream = ref({} as MediaStream);
 
 const shouldFaceUser = ref(false);
+const zoomLevel = ref(1);
+const maxZoom = 3;
+const minZoom = 1;
 
 const initialize = async () => {
   const video = videoRef.value;
@@ -126,13 +128,11 @@ const initialize = async () => {
       return;
     }
 
-    // Currently, no image manipulation
     const width = video.videoWidth;
     const height = video.videoHeight;
     data.canvasSize.width = width;
     data.canvasSize.height = height;
 
-    // Just as debug info
     data.videoSize.width = video.videoWidth;
     data.videoSize.height = video.videoHeight;
 
@@ -183,10 +183,38 @@ const takePicture = () => {
     throw new Error('Failed to obtain the context from canvas');
   }
 
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const zoomFactor = zoomLevel.value;
+  const sx = (video.videoWidth - video.videoWidth / zoomFactor) / 2;
+  const sy = (video.videoHeight - video.videoHeight / zoomFactor) / 2;
+  const sWidth = video.videoWidth / zoomFactor;
+  const sHeight = video.videoHeight / zoomFactor;
+
+  context.drawImage(
+    video,
+    sx,
+    sy,
+    sWidth,
+    sHeight,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
   data.imageUrl = canvas.toDataURL('image/jpeg');
 
   screenState.value = ScreenState.Captured;
+};
+
+const zoomIn = () => {
+  if (zoomLevel.value < maxZoom) {
+    zoomLevel.value += 0.1;
+  }
+};
+
+const zoomOut = () => {
+  if (zoomLevel.value > minZoom) {
+    zoomLevel.value -= 0.1;
+  }
 };
 
 watch(screenState, async (state) => {
